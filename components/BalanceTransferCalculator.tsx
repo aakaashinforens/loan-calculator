@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import InputControl from './InputControl';
-import { BANKS, getBankById } from '@/lib/banks';
+import { LENDERS, getLenderById } from '@/lib/lenders';
 import { calculateTransferSavings, LOAN_LIMITS } from '@/lib/loan';
 import { LeadCaptureForm } from './LeadCaptureForm';
 
@@ -15,17 +15,17 @@ export function BalanceTransferCalculator() {
 
   // Calculate savings for each eligible bank
   const savings = useMemo(() => {
-    const banksThatAcceptTransfer = BANKS.filter((b) => b.acceptsBalanceTransfer);
+    const banksThatAcceptTransfer = LENDERS.filter((l) => l.accepts_balance_transfer);
 
     return banksThatAcceptTransfer
       .map((bank) =>
         calculateTransferSavings(
           outstandingAmount,
           currentRate,
-          bank.balanceTransferRate.typical,
+          bank.balance_transfer_rate_typical,
           remainingTenure,
           bank.id,
-          bank.name
+          bank.lender
         )
       )
       .sort((a, b) => b.savings.perMonth - a.savings.perMonth); // Sort by savings (highest first)
@@ -105,9 +105,9 @@ export function BalanceTransferCalculator() {
             onChange={(e) => setCurrentBank(e.target.value)}
             className="w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:border-orange-600 focus:ring-1 focus:ring-orange-600"
           >
-            {BANKS.map((bank) => (
-              <option key={bank.id} value={bank.id}>
-                {bank.name}
+            {LENDERS.map((lender) => (
+              <option key={lender.id} value={lender.id}>
+                {lender.lender}
               </option>
             ))}
           </select>
@@ -170,7 +170,7 @@ export function BalanceTransferCalculator() {
             </thead>
             <tbody>
               {savings.map((s) => {
-                const bank = getBankById(s.newLoan.bankId);
+                const bank = getLenderById(s.newLoan.bankId);
                 const isBest = s.newLoan.bankId === bestSavings.newLoan.bankId;
 
                 return (
@@ -190,7 +190,7 @@ export function BalanceTransferCalculator() {
                         )}
                         {bank && (
                           <span className="text-xs font-medium px-2 py-1 rounded bg-slate-200 text-slate-700">
-                            {bank.type.toUpperCase()}
+                            {bank.category.toUpperCase()}
                           </span>
                         )}
                       </div>
