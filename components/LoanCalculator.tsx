@@ -39,7 +39,7 @@ export default function LoanCalculator() {
             step={LOAN_LIMITS.amount.step}
             onChange={setPrincipal}
             format={formatINRCompact}
-            suffix="₹"
+            prefix="₹"
           />
           <InputControl
             label="Interest rate (p.a.)"
@@ -49,17 +49,19 @@ export default function LoanCalculator() {
             step={LOAN_LIMITS.annualRate.step}
             onChange={setAnnualRate}
             format={(v) => `${v}%`}
+            decimals={2}
             suffix="%"
           />
           <InputControl
-            label="Loan tenure"
+            label="Repayment tenure"
             value={tenureYears}
             min={LOAN_LIMITS.tenureYears.min}
             max={LOAN_LIMITS.tenureYears.max}
             step={LOAN_LIMITS.tenureYears.step}
             onChange={setTenureYears}
             format={(v) => `${v} yr`}
-            suffix="yrs"
+            hint="Post-moratorium repayment period only, not total loan life."
+            suffix="years"
           />
         </div>
       </section>
